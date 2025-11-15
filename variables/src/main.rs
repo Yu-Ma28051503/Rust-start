@@ -1,3 +1,5 @@
+// 変数，関数，文・式，コメント，制御フローに関する勉強
+
 fn main() {
     println!("Hello, world!");
 
@@ -85,4 +87,49 @@ fn main() {
     
     let element = list5[index];
     println!("The value of list5[{}] is: {}", index, element);
+
+    /* 関数 */
+    another_fuinction(x, c);
 }
+
+fn another_fuinction(x: i32, uint_label: char) {
+    println!("=========================");
+    println!("Calling another function!");
+    println!("Arguments are: {}{}", x, uint_label);
+    // {}で新しいスコープを作成するブロック
+    {
+        let x = 3;
+        x + 1;
+    }
+
+    // 文: 値を返さない
+    let y = 6;
+    // 式: 何かしらの値を返す
+    // 例: 四則演算
+    let z = {
+        let a = 8;
+        a + 1  // ;を付けてしまうと文になってしまいzに値を返さなくなってしまう
+    };
+
+    println!("The most simple returning 6 function: {}", six());
+    println!("func func: {}", XpOne(six()));
+    
+    println!("=========================");
+}
+
+fn six() -> i32 {
+    6  // ;をつけると式ではなく文になってしまう
+}
+
+fn XpOne(x: i32) -> i32 {
+    x + 1
+}
+
+// コメント
+
+// So we’re doing something complicated here, long enough that we need
+// multiple lines of comments to do it! Whew! Hopefully, this comment will
+// explain what’s going on.
+// ここで何か複雑なことをしていて、長すぎるから複数行のコメントが必要なんだ。
+// ふう！願わくば、このコメントで何が起きているか説明されていると嬉しい。
+
