@@ -35,6 +35,47 @@ fn main() {
     let str = takes_and_gives_back(str);
     let (str, strlen) = cal_str_len(str);
     println!("{}: {}", strlen, str);
+
+    /* 参照(readonly) */
+    let hello_len = cal_str_size(&str);
+    println!("{}: {}", hello_len, str);
+
+    let mut hello = gives_ownership();
+    push_world(&mut hello);
+    println!("{}", hello);
+
+    {
+        let tmp_hello1 = &mut hello;
+        tmp_hello1.push_str(" tmp1!");
+        println!("tmp_hello1 has ownership {}", tmp_hello1);
+    }
+
+    let tmp_hello2 = &mut hello;
+    tmp_hello2.push_str(" tmp2!");
+    println!("tmp_hello2 has ownership {}", tmp_hello2);
+
+    let mut new_s = dangle();
+    new_s.push_str("new()");
+    println!("{}", new_s);
+
+    /* スライス */
+    let hello_world = String::from("hello world");
+    let end_first_word_index = first_word(&hello_world);
+    println!("index: {}", end_first_word_index);
+
+    let hello = &hello_world[0..5];
+    let world = &hello_world[6..11];
+    println!("{} {}", hello, world);
+
+    let good_hello = good_first_word(&hello_world[..]);
+    println!("{}", good_hello);
+
+    let word_literal = "hello world";
+    let literal_hello = good_first_word(word_literal);
+    println!("{}", literal_hello);
+
+    let a = [1, 2, 3, 4, 5];
+    let a_slice = &a[1..3];  // 参照で&[i32]型になる
 }
 
 fn takes_ownership(string: String) {  // ここでstrと同じメモリにアクセスしたいstringが現れるため，所有権がstringに移る
@@ -64,3 +105,55 @@ fn cal_str_len(s: String) -> (String, usize) {
 
     (s, len)
 }
+
+fn cal_str_size(s: &String) -> usize {
+    // sは元の変数のメモリアドレスを受け取ってるだけ
+    // s -> str -> "hello";
+    // 所有権は受け取ってないのでスコープを外れても"hello"の解放はない
+    s.len()
+}
+
+fn push_world(s: &mut String) {
+    s.push_str(", world!")
+}
+
+// ヌルポ
+// fn dangle() -> &String {
+//     let str = String::new();
+//     &str
+// }
+// 修正
+fn dangle() -> String {
+    let str = String::new();
+    str
+}
+
+// 不便バージョン
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    // iter()で各要素を返す
+    // emurate()で(要素番号, 要素の参照)のタプルを返す
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
+}
+
+// スライス利用後
+// fn good_first_word(s: &String) -> &str {
+fn good_first_word(s: &str) -> &str {  // さらに改善
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[..i];
+        }
+    }
+
+    &s[..]
+}
+
